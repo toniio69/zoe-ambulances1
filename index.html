@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="paramedic-star-of-life-symbol-free-svg-file-SvgHeart.Com-416x420.png" />
+  <link rel="stylesheet" href="style.css">
+  <title>Zoe Ambulances</title>
+ 
+  <script>
+    async function handleSubmit(event, formType) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => data[key] = value);
+
+      if (Object.values(data).some(value => !value.trim())) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/api/' + formType, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert('Form submitted successfully!');
+          form.reset();
+        } else {
+          alert('There was a problem submitting the form. Please try again.');
+        }
+      } catch (error) {
+        alert('Network error. Please try again later.');
+      }
+    }
+
+    function toggleMode() {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  document.getElementById('modeToggle').textContent = isDark ? '☀️' : '🌙';
+}
+
+window.onload = () => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+    document.getElementById('modeToggle').textContent = '☀️';
+  }
+};
+
+async function fetchWeather() {
+      const apiKey = '26c99a2c1fbd61c12e00c7a71c24d7b4'; // Replace with a valid OpenWeatherMap API key
+      const city = 'Nairobi';
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Weather data not available.');
+
+        const data = await response.json();
+        const description = data.weather[0].description;
+        const temp = data.main.temp;
+        const humidity = data.main.humidity;
+
+        document.getElementById('weather-info').textContent =
+          `Currently in ${city}: ${description}, ${temp}°C, Humidity: ${humidity}%`;
+      } catch (error) {
+        document.getElementById('weather-info').textContent = 'Unable to load weather data.';
+      }
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <button onclick="toggleMode()" id="modeToggle" style="position: absolute; top : 15px; right: 15px; padding: 0.5rem; border-radius: 5px; border: none; cursor: pointer;">
+      🌙
+    </button>
+    
+    <img src="ChatGPT Image May 8, 2025, 11_05_41 PM.png" alt="Zoe Ambulances Logo" class="logo" />
+    <h1>Zoe Ambulances</h1>
+    <nav>
+      <a href="#services" class="nav-button">Services</a>
+      <a href="#about" class="nav-button">About Us</a>
+      <a href="#contact" class="nav-button">Contact</a>
+      <a href="#service-request" class="nav-button">Service Request</a>
+    </nav>
+
+    <section class="content" id="weather">
+      <div class="card">
+        <h2>Weather Forecast</h2>
+        <p id="weather-info">Loading weather data...</p>
+      </div>
+    </section>
+  </header>
+
+  <div class="hero">
+    Fast, Reliable, and Professional Ambulance Services.
+  </div>
+
+  <section class="content" id="services">
+    <div class="card">
+      <h2>Emergency Response</h2>
+      <p>Rapid ambulance dispatch for urgent medical needs, 24/7.</p>
+    </div>
+    <div class="card">
+      <h2>Medical Transport</h2>
+      <p>Safe transportation for non-emergency medical appointments and transfers.</p>
+    </div>
+    <div class="card">
+      <h2>Event Coverage</h2>
+      <p>On-site ambulance services for events and gatherings of any size.</p>
+    </div>
+  </section>
+
+  <section class="content" id="about">
+    <div class="card">
+      <h2>About Us</h2>
+      <p>Zoe Ambulances is dedicated to providing the highest standard of emergency and non-emergency medical transport services. Our skilled team of EMTs and paramedics ensures fast and compassionate care when only seconds matter.</p>
+    </div>
+  </section>
+
+  <section class="content" id="contact">
+    <div class="card">
+      <h2>Contact Us</h2>
+      <form onsubmit="handleSubmit(event, 'contact')">
+        <input type="text" name="name" placeholder="Your Name" required />
+        <input type="email" name="email" placeholder="Your Email" required />
+        <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="content" id="service-request">    <div class="card">
+      <h2>Service Request Form</h2>
+      <form onsubmit="handleSubmit(event, 'request')">
+        <input type="text" name="patient" placeholder="Patient Name" required />
+        <input type="text" name="pickup" placeholder="Pick-up Location" required />
+        <input type="text" name="destination" placeholder="Destination" required />
+        <input type="tel" name="contact" placeholder="Contact Number" required />
+        <textarea name="details" placeholder="Additional Details" rows="5"></textarea>
+        <button type="submit">Request Ambulance</button>
+      </form>
+    </div>
+  </section>
+
+  <div class="map">
+    <h2>Find Us</h2>
+    <iframe src="https://www.google.com/maps/place/Utawala+Benedicta,Nairobi+Kenya/@-1.2778064,36.961897,17z/data=!3m1!4b1!4m6!3m5!1s0x182f6d3c37e562ff:0x38858bd2fdfaa4d6!8m2!3d-1.2778118!4d36.9644719!16s%2Fg%2F11v6fxfjgs?entry=ttu" allowfullscreen="" loading="lazy"></iframe>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Zoe Ambulances. All rights reserved.</p>
+    <p>Contact: info@zoeambulances.com | Phone: +254 700 000 000</p>
+    <p>Address: Utawala Benedicta, Nairobi, Kenya</p>
+    <p>Website: www.zoeambulances.com</p>
+    <p>Privacy Policy | Terms of Service</p>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/profile.php?id=61575954042607" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://www.instagram.com/zoeambulances_1/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.linkedin.com/in/anthony-henry-7455312b6/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="https://x.com/anthony_od23391" target="_blank" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+    </div>
+  </footer>
+</body>
+</html>

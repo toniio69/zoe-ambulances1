@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="paramedic-star-of-life-symbol-free-svg-file-SvgHeart.Com-416x420.png">
+  <title>Admin Dashboard - Zoe Ambulances</title>
+  <style>
+    body { font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; padding: 20px; }
+    h1 { color: hsl(355, 90%, 53%); }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+    th, td { padding: 10px; border: 1px solid #ccc; }
+    th { background: #2011f1; color: rgb(248, 232, 232); }
+    section { margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <a href="http://127.0.0.1:5501/index.html">
+    <button style="font-size:13px ;  background-color: white; color: black;border-radius: 19px;">back home</button>
+  </a>
+
+  <h1>Admin Dashboard.</h1>
+
+  <section>
+    <h2>Contact Messages:</h2>
+    <table id="contactsTable" border="2">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Message</th>
+          <th>Received At</th>
+        </tr>
+      </thead>
+      <tbody>
+<td>Paul Richot</td>
+<td>paulrichot@yahoo.com</td>
+<td>Possible pulmonary oedema</td>
+<td>1:00pm</td>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Service Requests</h2>
+    <table id="requestsTable" border="2">
+      <thead>
+        <tr>
+          <th>Patient Name</th>
+          <th>Pickup</th>
+          <th>Destination</th>
+          <th>Contact Number</th>
+          <th>Details</th>
+          <th>Requested At</th>
+          <th>PCR Image</th>
+          <th>Arraival at hospital</th>
+        </tr>
+      </thead>
+      <tbody>
+        <td>Paul Richot</td>
+        <td>Emara Ole Sereni</td>
+        <td>Coptic mission hospital</td>
+        <td>0728338003</td>
+        <td>47 year old african male man complainning of chest pain and shortness of breath</td>
+        <td>1:00pm EAT</td>
+        <td img src="ChatGPT Image May 8, 2025, 11_05_41 PM.png" alt="Paul Richot PCR" height="80" width="80">Paul Richot PCR</td>
+        <td>2:30pm EAT</td>
+      </tbody>
+    </table>
+  </section>
+
+<script>
+async function fetchData() {
+  try {
+    const contactsRes = await fetch('https://example-backend.com/api/admin/contacts');
+    const requestsRes = await fetch('https://example-backend.com/api/admin/requests');
+
+    const contacts = await contactsRes.json();
+    const requests = await requestsRes.json();
+
+    const contactsTable = document.getElementById('contactsTable').querySelector('tbody');
+    const requestsTable = document.getElementById('requestsTable').querySelector('tbody');
+
+    contacts.forEach(c => {
+      contactsTable.innerHTML += `
+        <tr>
+          <td>${c.name}</td>
+          <td>${c.email}</td>
+          <td>${c.message}</td>
+          <td>${new Date(c.createdAt).toLocaleString()}</td>
+        </tr>
+      `;
+    });
+
+    requests.forEach(r => {
+      requestsTable.innerHTML += `
+        <tr>
+          <td>${r.patientName}</td>
+          <td>${r.pickupLocation}</td>
+          <td>${r.destination}</td>
+          <td>${r.contactNumber}</td>
+          <td>${r.details}</td>
+          <td>${new Date(r.createdAt).toLocaleString()}</td>
+        </tr>
+      `;
+    });
+
+  } catch (error) {
+    alert('Failed to load admin data');
+  }
+}
+fetchData();
+</script>
+
+</body>
+</html>
