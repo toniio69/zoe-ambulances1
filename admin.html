@@ -1,29 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="paramedic-star-of-life-symbol-free-svg-file-SvgHeart.Com-416x420.png">
-  <title>Admin Dashboard - Zoe Ambulances</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Admin Dashboard – Zoe Ambulances</title>
+  <link rel="icon" type="image/png"
+        href="paramedic-star-of-life-symbol-free-svg-file-SvgHeart.Com-416x420.png" />
+
   <style>
-    body { font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; padding: 20px; }
-    h1 { color: hsl(355, 90%, 53%); }
+    body { font-family: "Franklin Gothic Medium","Arial Narrow",Arial,sans-serif; padding: 20px; }
+    h1  { color: hsl(355 90% 53%); }
     table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
     th, td { padding: 10px; border: 1px solid #ccc; }
-    th { background: #2011f1; color: rgb(248, 232, 232); }
+    th { background: #2011f1; color: #fff; }
     section { margin-top: 40px; }
+    img.pcr-thumb { width: 80px; height: 80px; object-fit: cover; }
+    button.back { font-size: 13px; background:#fff; color:#000; border-radius:19px; cursor:pointer; }
   </style>
 </head>
+
 <body>
   <a href="http://127.0.0.1:5501/index.html">
-    <button style="font-size:13px ;  background-color: white; color: black;border-radius: 19px;">back home</button>
+    <button class="back">⬅</button>
   </a>
 
-  <h1>Admin Dashboard.</h1>
+  <h1>Admin Dashboard</h1>
 
+  <!-- CONTACTS -->
   <section>
-    <h2>Contact Messages:</h2>
-    <table id="contactsTable" border="2">
+    <h2>Contact Messages</h2>
+    <table id="contactsTable">
       <thead>
         <tr>
           <th>Name</th>
@@ -32,85 +39,88 @@
           <th>Received At</th>
         </tr>
       </thead>
-      <tbody>
-<td>Paul Richot</td>
-<td>paulrichot@yahoo.com</td>
-<td>Possible pulmonary oedema</td>
-<td>1:00pm</td>
-      </tbody>
+      <tbody></tbody>
     </table>
   </section>
 
+  <!-- SERVICE REQUESTS -->
   <section>
     <h2>Service Requests</h2>
-    <table id="requestsTable" border="2">
+    <table id="requestsTable">
       <thead>
         <tr>
           <th>Patient Name</th>
-          <th>Pickup</th>
+          <th>Pickup Location</th>
           <th>Destination</th>
           <th>Contact Number</th>
           <th>Details</th>
           <th>Requested At</th>
           <th>PCR Image</th>
-          <th>Arraival at hospital</th>
+          <th>Arrival Time</th>
         </tr>
       </thead>
-      <tbody>
-        <td>Paul Richot</td>
-        <td>Emara Ole Sereni</td>
-        <td>Coptic mission hospital</td>
-        <td>0728338003</td>
-        <td>47 year old african male man complainning of chest pain and shortness of breath</td>
-        <td>1:00pm EAT</td>
-        <td img src="ChatGPT Image May 8, 2025, 11_05_41 PM.png" alt="Paul Richot PCR" height="80" width="80">Paul Richot PCR</td>
-        <td>2:30pm EAT</td>
-      </tbody>
+      <tbody></tbody>
     </table>
   </section>
 
-<script>
-async function fetchData() {
-  try {
-    const contactsRes = await fetch('https://example-backend.com/api/admin/contacts');
-    const requestsRes = await fetch('https://example-backend.com/api/admin/requests');
+  <script>
+    const BACKEND_URL = localStorage.getItem("BACKEND_URL") || "http://localhost:3000";
 
-    const contacts = await contactsRes.json();
-    const requests = await requestsRes.json();
+    async function fetchData() {
+      try {
+        const [contactsRes, requestsRes] = await Promise.all([
+          fetch(`${BACKEND_URL}/api/admin/contacts`),
+          fetch(`${BACKEND_URL}/api/admin/requests`)
+        ]);
 
-    const contactsTable = document.getElementById('contactsTable').querySelector('tbody');
-    const requestsTable = document.getElementById('requestsTable').querySelector('tbody');
+        if (!contactsRes.ok || !requestsRes.ok)
+          throw new Error("Server error");
 
-    contacts.forEach(c => {
-      contactsTable.innerHTML += `
-        <tr>
-          <td>${c.name}</td>
-          <td>${c.email}</td>
-          <td>${c.message}</td>
-          <td>${new Date(c.createdAt).toLocaleString()}</td>
-        </tr>
-      `;
-    });
+        const contacts = await contactsRes.json();
+        const requests = await requestsRes.json();
 
-    requests.forEach(r => {
-      requestsTable.innerHTML += `
-        <tr>
-          <td>${r.patientName}</td>
-          <td>${r.pickupLocation}</td>
-          <td>${r.destination}</td>
-          <td>${r.contactNumber}</td>
-          <td>${r.details}</td>
-          <td>${new Date(r.createdAt).toLocaleString()}</td>
-        </tr>
-      `;
-    });
+        // Contacts table
+        const contactsTbody = document.querySelector("#contactsTable tbody");
+        contactsTbody.innerHTML = contacts.map(c => `
+          <tr>
+            <td>${escapeHtml(c.name)}</td>
+            <td>${escapeHtml(c.email)}</td>
+            <td>${escapeHtml(c.message)}</td>
+            <td>${new Date(c.createdAt).toLocaleString()}</td>
+          </tr>
+        `).join("");
 
-  } catch (error) {
-    alert('Failed to load admin data');
-  }
-}
-fetchData();
-</script>
+        // Requests table
+        const requestsTbody = document.querySelector("#requestsTable tbody");
+        requestsTbody.innerHTML = requests.map(r => `
+          <tr>
+            <td>${escapeHtml(r.patientName)}</td>
+            <td>${escapeHtml(r.pickupLocation)}</td>
+            <td>${escapeHtml(r.destination)}</td>
+            <td>${escapeHtml(r.contactNumber)}</td>
+            <td>${escapeHtml(r.details || "—")}</td>
+            <td>${new Date(r.requestedAt || r.createdAt).toLocaleString()}</td>
+            <td>
+              ${r.PCRImage ? `<img src="${encodeURI(r.PCRImage)}" alt="PCR Image" class="pcr-thumb" />` : "—"}
+            </td>
+            <td>${r.arrivalTime ? new Date(r.arrivalTime).toLocaleString() : "—"}</td>
+          </tr>
+        `).join("");
 
+      } catch (err) {
+        console.error(err);
+        alert("Failed to load admin data. Check console for details.");
+      }
+    }
+
+    // Simple HTML-escape to avoid XSS
+    function escapeHtml(str = "") {
+      return str.replace(/[&<>'"]/g, c => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"
+      }[c]));
+    }
+
+    fetchData();
+  </script>
 </body>
 </html>
